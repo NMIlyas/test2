@@ -1,0 +1,165 @@
+ MySqlConnection con = new MySqlConnection("Data Source=localhost;Initial Catalog=booksdb;User ID=root;PWD=");
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            loadData();
+            bookid.Enabled = false;
+            updatebutton.Enabled = false;
+            updatebutton.Enabled = false;
+        }
+
+        private void savebutton_Click(object sender, EventArgs e)
+        {
+            if (bookid.Text == "" || bookname.Text == "" || authorname.Text == "" || bookedition.Text == "" || numpage.Text == "" || bookcategory.Text == "")
+            {
+                MessageBox.Show("Please fill all fields");
+            }
+            else
+            {
+                try
+                {
+
+                    if (con.State != ConnectionState.Open)
+                    {
+                        con.Open();
+                    }
+                    MySqlCommand cmd = new MySqlCommand("Insert into bookentry (bookname,author,num_page,edition,category) values (@bookname,@autorname,@numpage,@bookedition,@bookcategory)", con);
+                    cmd.Parameters.AddWithValue("@bookid", bookid.Text);
+                    cmd.Parameters.AddWithValue("@bookname", bookname.Text);
+                    cmd.Parameters.AddWithValue("@authorname", authorname.Text);
+                    cmd.Parameters.AddWithValue("@numpage", numpage.Text);
+                    cmd.Parameters.AddWithValue("@bookedition", bookedition.Text);
+                    cmd.Parameters.AddWithValue("@bookcategory", bookcategory.Text);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Data saved successfully.");
+                    clearbox();
+                    con.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+        public void clearbox()
+        {
+            bookname.Text = "";
+            authorname.Text = "";
+            numpage.Text = "";
+            bookedition.Text = "";
+            bookcategory.Text = "";
+        }
+
+
+        public void loadData()
+        {
+            try
+            {
+
+                if (con.State != ConnectionState.Open)
+                {
+                    con.Open();
+                }
+                MySqlDataAdapter sda = new MySqlDataAdapter("select * from bookentry", con);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                gridview.DataSource = dt;
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+        private void bunifuCustomDataGrid1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int rowindex = e.RowIndex;
+            DataGridViewRow row = gridview.Rows[rowindex];
+            bookid.Text = row.Cells[0].Value.ToString();
+            bookname.Text = row.Cells[1].Value.ToString();
+            authorname.Text = row.Cells[2].Value.ToString();
+            numpage.Text = row.Cells[3].Value.ToString();
+            bookedition.Text = row.Cells[4].Value.ToString();
+            bookcategory.Text = row.Cells[5].Value.ToString();
+            savebutton.Enabled = false;
+            updatebutton.Enabled = true;
+            updatebutton.Enabled = true;
+        }
+
+
+        private void delete_Click(object sender, EventArgs e)
+        {
+            if (bookid.Text == "" || bookname.Text == "" || authorname.Text == "" || bookedition.Text == "" || numpage.Text == "" || bookcategory.Text == "")
+            {
+                MessageBox.Show("Please fill all fields");
+            }
+            else
+            {
+                try
+                {
+
+                    if (con.State != ConnectionState.Open)
+                    {
+                        con.Open();
+                    }
+                    MySqlCommand cmd = new MySqlCommand("delete from bookentry where bookid=@bookid", con);
+                    cmd.Parameters.AddWithValue("@bookid", bookid.Text);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Data deleted successfully.");
+                    loadData();
+                    clearbox();
+                    con.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        private void update_Click(object sender, EventArgs e)
+        {
+            if (bookid.Text == "" || bookname.Text == "" || authorname.Text == "" || bookedition.Text == "" || numpage.Text == "" || bookcategory.Text == "")
+            {
+                MessageBox.Show("Please fill all fields");
+            }
+            else
+            {
+                try
+                {
+
+                    if (con.State != ConnectionState.Open)
+                    {
+                        con.Open();
+                    }
+                    MySqlCommand cmd = new MySqlCommand("update bookentry set bookname=@bookname,author=@authorname,num_page=@numpage,edition=@bookedition,category=@bookcategory where bookid=@bookid", con);
+                    cmd.Parameters.AddWithValue("@bookid", bookid.Text);
+                    cmd.Parameters.AddWithValue("@bookname", bookname.Text);
+                    cmd.Parameters.AddWithValue("@authorname", authorname.Text);
+                    cmd.Parameters.AddWithValue("@numpage", numpage.Text);
+                    cmd.Parameters.AddWithValue("@bookedition", bookedition.Text);
+                    cmd.Parameters.AddWithValue("@bookcategory", bookcategory.Text);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Data saved successfully.");
+                    loadData();
+                    clearbox();
+                    con.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
